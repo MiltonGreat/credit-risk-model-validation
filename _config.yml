@@ -1,0 +1,12 @@
+# _config.yml
+title: "Quantitative Model Risk Management"
+description: "A teaching portfolio bridging regulatory frameworks (SR 11-7, OSFI E-23, IFRS 9) with Python credit risk modeling."
+theme: jekyll-theme-minimal # The simplest, cleanest theme for documentation
+
+# Social links (Optional, but shows you are a real person)
+github_username:  [YOUR_GITHUB_USERNAME] # <-- CHANGE THIS
+linkedin_username: [YOUR_LINKEDIN_USERNAME] # <-- CHANGE THIS
+
+# Navigation settings (We will add more pages later)
+show_downloads: false
+google_analytics: # You can add your tracking ID later if you want
