@@ -1,0 +1,47 @@
+---
+# This SCSS file gets compiled into CSS by Jekyll
+---
+
+@import "{{ site.theme }}";
+
+/* Custom styling to make it look like a risk management dashboard */
+body {
+  background-color: #f7f9fc;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+h1, h2, h3 {
+  color: #1a3b5d; /* Deep navy blue - gives a 'Basel Committee' vibe */
+  border-bottom: 2px solid #dce1e8;
+  padding-bottom: 10px;
+}
+
+h2 {
+  border-bottom: 1px solid #e5e9ef;
+}
+
+/* Styling for regulatory callouts - makes your site look professional */
+.regulatory-note {
+  background-color: #eef4fa;
+  border-left: 6px solid #005a9c; /* The classic 'bank' blue */
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+
+.code-reference {
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.highlight-box {
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
