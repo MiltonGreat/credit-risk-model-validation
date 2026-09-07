@@ -138,7 +138,7 @@ pip install -r requirements.txt
 
 ---
 
-# Data Directory
+## Data Directory
 
 ## Data Source
 
@@ -147,4 +147,4 @@ This project uses the Fannie Mae Single-Family Loan Performance dataset.
 ### Download Instructions
 
 **Visit Kaggle.com to find the Fannie Mae Data:**
-   - Go to: [[https://www.fanniemae.com/research-and-insights/data](https://www.kaggle.com/datasets/pranay07/fanne-mae-loan-performance-data)](https://www.kaggle.com/datasets/utkarshx27/lending-club-loan-dataset?resource=download)
+   - Go to: https://www.kaggle.com/datasets/utkarshx27/lending-club-loan-dataset?resource=download
