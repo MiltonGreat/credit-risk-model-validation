@@ -259,7 +259,7 @@ Every notebook run produces an audit log, a `run_id` on every artifact, a SHA-25
 
 ## Related repositories
 
--[ model-analysis-package](https://github.com/MiltonGreat/model-analysis-package) — the MAP anchor: five governance deliverables, including this project's Validation Report
+- [model-analysis-package](https://github.com/MiltonGreat/model-analysis-package) — the MAP anchor: five governance deliverables, including this project's Validation Report
 - [fannie-mae-ifrs9-framework](https://github.com/MiltonGreat/fannie-mae-ifrs9-portfolio/tree/main) — the companion IFRS 9 stress-testing framework
 
 ## License
