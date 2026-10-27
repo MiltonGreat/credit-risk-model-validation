@@ -2,10 +2,6 @@
 
 **Model:** Lending Club Credit Default Model (collections prioritization)  
 **Validation run:** 20261021_145017 (NB03 v2.1)  
-**Author:** `[ANALYST: name]`  
-**Role:** `[ANALYST: role — Independent Validator / Model Risk]`  
-**Date:** `[ANALYST: date]`  
-**Signature:** `[ANALYST: signature]`
 
 ---
 
@@ -251,8 +247,7 @@ The model is **not approved for deployment**. Conditions for re-validation:
 >
 > **6.** The model's limitations — particularly the region-as-proxy fairness testing, the absence of macro factors, and the U.S.-only data — constrain the interpretation of the verdict but do not change it.
 >
-> **Signed:** `[ANALYST: signature]`  
-> **Date:** `[ANALYST: date]`
+
 
 ---
 
