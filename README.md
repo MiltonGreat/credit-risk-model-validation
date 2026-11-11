@@ -361,7 +361,7 @@ Every notebook run produces an audit log, a `run_id` on every artifact, a SHA-25
 
 ## Key documents
 
-### `governance/` — 11 project-governance artifacts
+### `governance/` — 12 project-governance artifacts
 
 The `governance/` folder contains the project-governance artifacts that support the verdict. A reader who wants the full evidence trail follows the links below.
 
@@ -378,6 +378,9 @@ The `governance/` folder contains the project-governance artifacts that support 
 | Remediation Plan | `governance/remediation-plan.md` | Sequenced actions with owners, deadlines, and success criteria |
 | Approval Record | `governance/approval-record.md` | Sign-off chain, monitoring conditions, next review |
 | Analysis Code & Results | `governance/analysis-code-results.md` | Index to the notebooks and a summary of their results |
+| Validation Opinion | `reports/validation-opinion.md` | **Draft, pending analyst signature** — the signed verdict document |
+
+**On the Validation Opinion's location.** The Validation Opinion is in `reports/` (not `governance/`), because it is the document that carries the verdict — and the verdict is what the `reports/` folder is for. Its **status is draft pending analyst signature**; the analyst sign-off block in the document has the `[ANALYST: ...]` placeholders that the claim-authorization discipline requires. When the analyst signs it, the status changes to "signed" and the "pending analyst signature" note is removed.
 
 ### `docs/` — narrative documents
 
@@ -386,7 +389,6 @@ The `governance/` folder contains the project-governance artifacts that support 
 | `docs/intended_use_statement.md` | Model purpose, intended use, documented limitations |
 | `docs/data_dictionary.md` | Feature definitions, sources, exclusion rationale |
 | `docs/regulatory_mapping.md` | Full OSFI E-23 / SR 11-7 / ECOA / IFRS 9 mapping |
-| `docs/remediation_plan.md` | Sequenced remediation actions with owners and timelines |
 
 ### `outputs/reports/` — pipeline outputs
 
@@ -398,11 +400,7 @@ The `governance/` folder contains the project-governance artifacts that support 
 | `outputs/reports/performance_summary_v2.json` | Authoritative validation verdict (`authored_by: "NB03"`) |
 | `outputs/reports/german_credit_cross_validation.json` | Cross-population test results |
 
-### One governance artifact that is not in the folder, and why
-
-**Validation Opinion.** The 12-deliverable MAP structure includes a Validation Opinion as the signed, single-document verdict. The Lending Club project's Validation Opinion is the one artifact the folder does not yet contain. **The Validation Report (`outputs/reports/validation_report_v2.txt`) is the evidence base — the Validation Opinion is the signed cover that states the verdict.** It is on the project's roadmap; the Validation Report is the input it will use.
-
-The Fannie Mae project (the companion repo) does not have a Validation Opinion either — **by design**, because the Fannie Mae project is a framework, not a validated model. The two absences are different: the Lending Club absence is a gap on the roadmap; the Fannie Mae absence is the correct status for a framework.
+**On the Validation Opinion's placement.** The Validation Opinion is the only governance artifact in `reports/` rather than `governance/`. This is deliberate: the Validation Opinion is the document that **carries the verdict**, and it belongs alongside the other report outputs, not alongside the governance artifacts that support it. The LC `governance/consolidated-findings-register.md` and the LC `reports/validation-opinion.md` are the two faces of the same verdict — the register records what was found; the opinion records the analyst's signed conclusion.
 
 ---
 
