@@ -82,7 +82,7 @@ The arithmetic is what makes this clear. If fairness were OK (DI ≥ 0.80), the 
 4. Walk-forward split implemented, or a documented DCR amendment.
 5. Investigation of four counterintuitive SHAP features (F-03.07).
 
-> **Read with:** [`docs/remediation_plan.md`](docs/remediation_plan.md) — each condition mapped to a finding ID, owner, deadline, and success criterion.
+> **Read with:** [`governance/remediation-plan.md`](governance/remediation-plan.md) — each condition mapped to a finding ID, owner, deadline, and success criterion.
 
 ---
 
@@ -361,24 +361,55 @@ Every notebook run produces an audit log, a `run_id` on every artifact, a SHA-25
 
 ## Key documents
 
+### `governance/` — 11 project-governance artifacts
+
+The `governance/` folder contains the project-governance artifacts that support the verdict. A reader who wants the full evidence trail follows the links below.
+
+| Artifact | File | Description |
+|---|---|---|
+| Problem Definition Record | `governance/problem_definition.md` | Decision supported, population, target, constraints |
+| Analytical Specification | `governance/analytical-specification.md` | Research questions, hypotheses, variables, success criteria |
+| Data Specification | `governance/data-specifications.md` | Data sources, lineage, missingness, leakage audit |
+| Feature Decision Log | `governance/features-decision-log.md` | Feature selection criteria, transformations, proxies |
+| Methodology Document | `governance/methodology-document.md` | Candidates, selection, frozen parameters |
+| Risk & Validation Plan | `governance/risk-validation-plan.md` | Thresholds, stability, drift, fairness, decision rules |
+| Decision Criteria Register | `governance/decision-criteria-register.md` | Acceptable performance, drift, disparity, investigation triggers |
+| Consolidated Findings Register | `governance/consolidated-findings-register.md` | The 11-item findings register, cross-referenced to the notebook phases |
+| Remediation Plan | `governance/remediation-plan.md` | Sequenced actions with owners, deadlines, and success criteria |
+| Approval Record | `governance/approval-record.md` | Sign-off chain, monitoring conditions, next review |
+| Analysis Code & Results | `governance/analysis-code-results.md` | Index to the notebooks and a summary of their results |
+
+### `docs/` — narrative documents
+
 | Document | Description |
 |---|---|
 | `docs/intended_use_statement.md` | Model purpose, intended use, documented limitations |
 | `docs/data_dictionary.md` | Feature definitions, sources, exclusion rationale |
 | `docs/regulatory_mapping.md` | Full OSFI E-23 / SR 11-7 / ECOA / IFRS 9 mapping |
 | `docs/remediation_plan.md` | Sequenced remediation actions with owners and timelines |
+
+### `outputs/reports/` — pipeline outputs
+
+| Document | Description |
+|---|---|
 | `outputs/reports/validation_report_v2.txt` | Full independent validation report |
 | `outputs/reports/validation_findings_register.csv` | 11-item findings register (machine-readable) |
 | `outputs/reports/fairness_validation.csv` | Region-level fairness metrics |
 | `outputs/reports/performance_summary_v2.json` | Authoritative validation verdict (`authored_by: "NB03"`) |
 | `outputs/reports/german_credit_cross_validation.json` | Cross-population test results |
 
+### One governance artifact that is not in the folder, and why
+
+**Validation Opinion.** The 12-deliverable MAP structure includes a Validation Opinion as the signed, single-document verdict. The Lending Club project's Validation Opinion is the one artifact the folder does not yet contain. **The Validation Report (`outputs/reports/validation_report_v2.txt`) is the evidence base — the Validation Opinion is the signed cover that states the verdict.** It is on the project's roadmap; the Validation Report is the input it will use.
+
+The Fannie Mae project (the companion repo) does not have a Validation Opinion either — **by design**, because the Fannie Mae project is a framework, not a validated model. The two absences are different: the Lending Club absence is a gap on the roadmap; the Fannie Mae absence is the correct status for a framework.
+
 ---
 
 ## Related repositories
 
-- [model-analysis-package](https://github.com/MiltonGreat/model-analysis-package) — the MAP anchor: five governance deliverables, including this project's Validation Report
-- [fannie-mae-ifrs9-framework](https://github.com/MiltonGreat/fannie-mae-ifrs9-portfolio/tree/main) — the companion IFRS 9 stress-testing framework
+- [model-analysis-package](https://github.com/MiltonGreat/model-analysis-package) — the MAP anchor: the governance framework (AI Governance Policy, Regulatory Gap Analysis, Vendor Governance Review Template) and the package deliverables
+- [fannie-mae-ifrs9-framework](https://github.com/MiltonGreat/credit-risk-model-validation) — the companion IFRS 9 stress-testing framework
 
 ## License
 
