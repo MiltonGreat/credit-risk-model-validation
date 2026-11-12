@@ -2,6 +2,9 @@
 
 **Model:** Lending Club Credit Default Model (collections prioritization)  
 **Validation run:** 20261021_145017 (NB03 v2.1)  
+**Document ID:** LC-VO-001  
+**Version / Status:** 1.0 / Draft pending analyst signature  
+**Location:** `reports/validation-opinion.md` (this file) — the signed verdict document; the evidence base is `deliverables/02_validation_report_lc.md`
 
 ---
 
@@ -226,7 +229,7 @@ The model is **not approved for deployment**. Conditions for re-validation:
 | Model risk assessment | COMPLIANT | Five-component risk score, DCR §9 | — |
 | Independent validation | COMPLIANT | NB03 v2.1 independent validation | — |
 | **Pillar 4 — Model Risk Reporting** | | | |
-| Reporting to senior management | `[ANALYST: confirm whether MRC has received this]` | NB04 compliance report | — |
+| Reporting to senior management | `[ANALYST: confirm whether the MRC has received the compliance report (NB04 outputs/reports/compliance_report_v2.txt), and record the date of receipt if so]` | NB04 compliance report | — |
 | Ongoing monitoring | PARTIALLY COMPLIANT | PSI not assessed; monthly monitoring framework not established | Monitoring dashboard |
 
 ---
@@ -246,8 +249,6 @@ The model is **not approved for deployment**. Conditions for re-validation:
 > **5.** This Validation Opinion is based on the evidence enumerated in §A.3. The verdict-ownership chain (NB02 → NB03 → NB04 → NB05) has been verified. No material gaps in the evidence base were found.
 >
 > **6.** The model's limitations — particularly the region-as-proxy fairness testing, the absence of macro factors, and the U.S.-only data — constrain the interpretation of the verdict but do not change it.
->
-
 
 ---
 
@@ -255,8 +256,10 @@ The model is **not approved for deployment**. Conditions for re-validation:
 
 | Field | Value |
 |---|---|
-| Version | 1.0 |
-| Status | Draft pending analyst signature |
-| Supersedes | None (first version) |
-| Next review | At completion of conditions 1–3 (target: 3 months) |
-| Related documents | MAP deliverables 1–12, AI Interaction Record |
+| **Document ID** | LC-VO-001 |
+| **Version** | 1.0 |
+| **Status** | Draft pending analyst signature |
+| **Location** | `reports/validation-opinion.md` |
+| **Supersedes** | None (first version) |
+| **Next review** | At completion of conditions 1–3 (target: 3 months) |
+| **Related documents** | `deliverables/02_validation_report_lc.md` (the evidence base); `governance/consolidated-findings-register.md`; `governance/decision-criteria-register.md`; `governance/risk-validation-plan.md`; `governance/remediation-plan.md`; `deliverables/04_ai_interaction_record.md` |
