@@ -1,24 +1,16 @@
-# Artifact A15: Write the Challenge Record
+# Artifact A15: Challenge Record
 **Project:** End-to-End Credit Risk Modeling & Validation Framework  
-**Scope:** Lending Club & German Credit Datasets (Leakage-Fixed Execution)  
+**Scope:** Invalidation Inventory & Sensitivity Analysis  
 **Date:** November 18, 2026  
 
 ---
 
-## Potential Invalidation Vectors & Reviewer Challenges
-
-1. **Class Imbalance & Probability Calibration (Lending Club):**
-   * *Challenge:* With a default rate of ~1.78%, uncalibrated probability outputs from class-weighted models can severely overstate absolute default risk, distorting economic capital calculations and cut-off threshold selections.
-   * *Invalidation Risk:* If probability outputs are used directly for Expected Loss (EL) pricing without Isotonic Regression or Platt Scaling adjustments, credit decisions will misallocate capital.
-
-2. **Geographic Aggregation Abstraction (Disparate Impact):**
-   * *Challenge:* Aggregating fairness metrics at the Census Region level masks localized state-level or metropolitan statistical area (MSA) economic variations.
-   * *Invalidation Risk:* Regional aggregation may create false positives (masking localized compliance compliance) or false negatives (hiding state-specific disparate impact violations under ECOA).
-
-3. **Cross-Jurisdictional Generalizability (German Credit):**
-   * *Challenge:* Does validating proxy-removal mitigation on a 1,000-row European credit dataset ($N=1,000$) prove efficacy for a large-scale US retail credit portfolio ($N>100,000$)?
-   * *Invalidation Risk:* Differences in underwriting criteria, regulatory definitions of default, and macroeconomic structures mean German Credit results establish conceptual proof rather than direct operational equivalence.
-
-4. **Feature Staleness & Macroeconomic Shift:**
-   * *Challenge:* Models trained on historical static snapshots do not account for post-model economic shocks (e.g., interest rate shifts or inflation cycles).
-   * *Invalidation Risk:* Rapid degradation of model stability and rank-ordering power over out-of-time (OOT) validation periods.
+## Challenge & Invalidation Analysis
+* **Invalidation Inventory:** A different out-of-time period could change the AUC; a different leakage definition could change the feature set; the developer's claim could be based on a different target definition.
+* **Alternative Explanations:** The model may be learning the platform's grading process rather than default risk; the AUC difference may reflect a target definition difference rather than leakage.
+* **Sensitivity Analysis:** The model was re-run with and without `grade`/`sub_grade`; the AUC is **0.72 with** and **0.66 without**. The leakage-free result of **0.631** is the conservative case.
+* **Replication Assessment:** Not replicated independently; the validation is a single-analyst exercise.
+* **Adversarial Questions:** 
+  > *"Why should we trust your leakage exclusion and not the developer's claim?"*  
+  > **Answer:** Because the exclusion is documented, the feature list is checkable against the data dictionary, and the leakage-free AUC is reproducible from the archived output.
+* **Falsification Conditions:** The finding would be falsified if the developer produces a leakage-free feature set with an AUC $\ge 0.70$ on the same out-of-time period.
