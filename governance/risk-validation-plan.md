@@ -159,3 +159,69 @@ NB03 (Validator)  ──▶ asserts no verdict, writes verdict + authored_by="NB
        │
        ├──▶ NB04 (Governance)       ──▶ asserts authored_by="NB03", inherits verdict
        └──▶ NB05 (Cross-validation) ──▶ asserts authored_by="NB03", reads context
+
+## 5.2 Roles, responsibilities, and decision authority matrix
+
+### Roles and responsibilities
+* **Model Developer ([ANALYST: name]):** NB02 ownership; model training; implementation of remediation. Implements changes; cannot self-approve.
+* **Independent Validator ([ANALYST: name]):** NB03 ownership; verdict authorship; Validation Opinion. Authors the verdict; cannot deploy.
+* **Governance Team ([ANALYST: name]):** NB04 ownership; compliance report generation. Documents compliance; does not override validator.
+* **Model Risk Committee Chair ([ANALYST: name]):** Final approval or rejection. Can approve, reject, or override (with documented rationale).
+* **Data Owner ([ANALYST: name]):** Custodian of `loans_full_schema.csv`. Controls data access and versioning.
+
+### Decision authority matrix
+| Decision / Role | Developer (NB02) | Validator (NB03) | Governance (NB04) | MRC Chair |
+|---|---|---|---|---|
+| **Retrain the model** | Yes | No | No | Notify |
+| **Write the Validation Opinion** | No | Yes | No | Review |
+| **Override the verdict** | No | No | No | **Yes (with rationale)** |
+| **Approve deployment** | No | No | No | **Yes** |
+| **Condition the approval** | Propose | Yes | Document | **Approve** |
+| **Deploy** | Implement | No | No | **Authorize** |
+
+---
+
+## 6. Validation schedule, milestones, and escalation path
+
+### 6.1 Phase plan
+| Phase | Activity | Pipeline status | Validation status |
+|---|---|---|---|
+| Phase 1 — Development | NB01 + NB02 (data, features, training) | Executed | — |
+| Phase 2 — Independent validation | NB03 (performance, fairness, calibration, SHAP) | Executed | Pending MRC review |
+| Phase 3 — Governance | NB04 (compliance report) | Executed | Pending MRC review |
+| Phase 4 — Cross-validation | NB05 (German Credit) | Executed | Pending MRC review |
+| Phase 5 — Validation Opinion | Analyst-authored verdict document | Authored | Pending signature |
+| Phase 6 — MRC review | MRC decision on the verdict | — | Pending |
+| Phase 7 — Remediation | `LC-R-01` through `LC-R-10` (`MAP-RP-001`) | — | Not started |
+| Phase 8 — Re-validation | NB03 re-run with new artifacts | — | Not started |
+
+### 6.2 Key milestones
+| Milestone | Target date | Owner | Status |
+|---|---|---|---|
+| Validation Opinion signed | [ANALYST: date] | Independent Validator | Pending |
+| MRC decision recorded | [ANALYST: date] | MRC Chair | Pending |
+| Fairness remediation complete (`LC-R-01`) | 3 months | Developer | Not started |
+| Calibration remediation complete (`LC-R-03`) | 1 month | Developer | Not started |
+| Split method decision (`LC-R-02`) | Next version | Developer | Not started |
+| Re-validation | Month 3 | Validator | Not started |
+
+### 6.3 Escalation path
+* **CRITICAL finding in NB03:** Immediate escalation to MRC; deployment blocked until resolved.
+* **HIGH finding in NB03:** Escalate to MRC with timeline; deployment conditions attached.
+* **Remediation behind schedule:** Escalate to MRC at 50% of timeline.
+* **New CRITICAL finding post-validation:** Re-validation required before any deployment.
+* **MRC overrides validator verdict:** Documented rationale required; re-validation on the affected dimension.
+
+---
+
+## 7. Validation-process limitations (VL-1 to VL-7)
+
+| ID | Limitation | Impact on validation | Mitigation |
+|---|---|---|---|
+| **VL-1** | Region proxy used instead of direct protected class | Fairness findings are indicative, not definitive | Documented; HMDA-equivalent data is a long-term item |
+| **VL-2** | PSI is `not_assessed` on random split | Temporal stability is untested | Documented; walk-forward split tracked as `LC-R-02` |
+| **VL-3** | SHAP evaluated on 100-row sample | Feature attributions are indicative | Full-population SHAP queued for future revision |
+| **VL-4** | HL test produces degenerate $p$-values for 3 of 4 models | Calibration uncertain for affected models | Degeneracy check flags issue; tracked under `LC-R-03` |
+| **VL-5** | Single-threshold fairness ($0.5$ cutoff only) | Operating-point sensitivity of DI is untested | Threshold sensitivity queued for future revision |
+| **VL-6** | No V1.0 baseline | Compliance scorecard cannot report delta-from-baseline | Documented in NB04 |
+| **VL-7** | Single analyst executes pipeline and validation | Independence relies on technical separation (`NB02`/`NB03` contract chain), not organizational separation | Enforced via `authored_by` assertions and MRC authority matrix |
