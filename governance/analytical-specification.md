@@ -1,7 +1,7 @@
 ---
 Artifact ID: LC-A02-AS
-Version: 1.1
-Run ID: [20261118_133800]
+Version: 1.2
+Run ID: 20261118_133800
 Document Title: Analytical Specification
 Project: Lending Club Consumer Credit Risk Model Validation
 ---
