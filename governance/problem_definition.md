@@ -1,6 +1,6 @@
 ---
 Artifact ID: LC-A01-PDR
-Version: 2.1
+Version: 1.2
 Run ID: 20261118_132900
 Document Title: Problem Definition Record
 Project: Lending Club Consumer Credit Risk Model Validation
