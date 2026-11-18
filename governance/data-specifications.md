@@ -1,6 +1,6 @@
 ---
 Artifact ID: LC-A03-DS
-Version: 1.1
+Version: 1.2
 Run ID: 20261118_134600
 Document Title: Data Specification
 Project: Lending Club Consumer Credit Risk Model Validation
