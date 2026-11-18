@@ -1,25 +1,16 @@
 # Artifact A13: Interpretation Record
 **Project:** End-to-End Credit Risk Modeling & Validation Framework  
-**Scope:** Lending Club & German Credit Datasets (Leakage-Fixed Execution)  
+**Result ID:** R-01  
 **Date:** November 18, 2026  
 
 ---
 
-## 1. Executive Summary of Quantitative Results
-The empirical results across the model development and validation pipelines indicate that standard machine learning classifiers (`Logistic Regression`, `XGBoost`, `Random Forest`, `LightGBM`) achieve baseline predictive power but expose significant fairness and generalization vulnerabilities under institutional risk frameworks (OSFI E23, SR 11-7, and ECOA).
-
-* **Lending Club Baseline & Fairness (Notebooks 01–03):** Models achieved an out-of-sample AUC-ROC of ~0.635 under severe class imbalance (~1.78% default rate). However, validation under DCR v2.2 revealed a **SEVERE regional disparate impact violation (DI 0.5414)**, triggering an automatic formal high/reject risk score (6/10).
-* **German Credit Cross-Validation (Notebook 05, Run ID `20261118_170144`):** Following the removal of target leakage, leakage-free models achieved robust out-of-sample AUC-ROC performance ranging between **0.7614 and 0.7776** (Accuracy ~0.67–0.72), confirming that proxy-feature mitigation techniques generalize effectively without relying on ground-truth label contamination.
-
----
-
-## 2. Economic & Risk Meaning of Findings
-
-### A. Predictive Discrimination vs. Information Value
-The modest AUC (~0.635) on Lending Club reflects the inherent noise in prime/near-prime retail credit portfolios where default events are rare. While tree-based ensembles and logistic regressions rank-order risk moderately better than random selection, their operational utility is strictly bounded by calibration drift and class imbalance distortions.
-
-### B. Structural Fairness Risks
-The disparate impact ratio (0.5414) in Census Region evaluations indicates that geographic economic structuring creates proxy discrimination against protected demographic groups. Ingestion of regional macro-indicators without explicit mitigation violates fair lending principles (ECOA) by penalizing borrowers based on geographic location rather than individual creditworthiness.
-
-### C. Generalizability of Mitigation
-The German Credit cross-validation results (~0.77 AUC) prove that proxy-feature removal (e.g., isolating housing, foreign worker status, and personal status attributes) preserves primary risk-ranking capability while decoupling models from discriminatory proxy channels. This validates the feasibility of fair-lending-compliant feature engineering across distinct regulatory jurisdictions.
+## Result Summary
+* **Result:** Leakage-free AUC = **0.631** on the out-of-time test set. Developer's stated claim: **0.865**. Difference: **0.234 (27.1%)**.
+* **What it measures:** The model's ability to rank-order Fully Paid vs. Charged Off loans on later vintages.
+* **What it does not measure:** Calibration (whether predicted probabilities match observed frequencies); individual-loan decision quality; performance on vintages outside 2016–2018.
+* **Benchmarks applied:** AP-01 tolerance: AUC $\ge 0.70$. The model fails AP-01 (0.631 < 0.70). The developer's claim of 0.865 is not a benchmark; it is the claim the validation was commissioned to test.
+* **Uncertainty:** Moderate; the out-of-time test set is a single period. The standard error of the AUC is approximately 0.01; the difference from 0.70 is not within sampling error.
+* **Contradictory evidence:** The developer's claim of 0.865. The difference is explained by the leakage exclusion: the developer's claim appears to include post-origination fields. This is the finding the validation was commissioned to produce.
+* **Interpretation:** The model's leakage-free performance is below the pre-registered tolerance. The model is not fit for portfolio risk assessment as specified. The developer's claim is not supported by leakage-free evidence.
+* **Limitations:** The model is not calibrated; calibration would require a separate analysis. The out-of-time test is a single period; a second period would strengthen the conclusion.
