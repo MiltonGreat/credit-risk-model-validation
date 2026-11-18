@@ -9,87 +9,153 @@ Project: Lending Club Consumer Credit Risk Model Validation
 # Risk & Validation Plan — Lending Club Credit Default Model
 
 ## At a glance
-* **Purpose:** Fix, in advance, what the validation will test, how success will be judged, and who decides[cite: 1].
-* **Scope:** Independent validation of the Lending Club model (NB02) — fairness, performance, calibration, stability, governance[cite: 1].
-* **Prescribed fairness test:** FD-05 4/5ths rule at region level (lowest-cardinality attribute)[cite: 1].
-* **Prescribed discrimination floor:** AUC $\ge 0.65$, KS $\ge 0.30$ (DCR §1)[cite: 1].
-* **Prescribed calibration floor:** HL $p > 0.05$ for $\ge 3$ of 4 models (DCR §2)[cite: 1].
-* **Prescribed stability floor:** PSI $< 0.15$ on a time-based split (DCR §4)[cite: 1].
-* **Authority:** MRC Chair is the only role with approval authority; validator's verdict is authoritative until MRC override[cite: 1].
-* **Where results live:** MAP-VR-LC-001 (Validation Report) — not in this plan[cite: 1].
+
+| Field | Value |
+|---|---|
+| **Purpose** | Fix, in advance, what the validation will test, how success will be judged, and who decides |
+| **Scope** | Independent validation of the Lending Club model (NB02) — performance, stability, drift, fairness, explainability, stress testing, sensitivity, and governance |
+| **Prescribed fairness test** | FD-05 4/5ths rule at region level (lowest-cardinality attribute) |
+| **Prescribed discrimination floor** | $\text{AUC} \ge 0.65$, $\text{KS} \ge 0.30$ (DCR §1) |
+| **Prescribed calibration floor** | HL $p > 0.05$ for $\ge 3$ of 4 models (DCR §2) |
+| **Prescribed stability floor** | $\text{PSI} < 0.15$ on a time-based split (DCR §4) |
+| **Authority** | MRC Chair is the only role with approval authority; validator's verdict is authoritative until MRC override |
+| **Where results live** | `MAP-VR-LC-001` (Validation Report) and `LC-DCR-001` — not in this plan |
+
+> **On the relationship between this plan and the Validation Report:** This plan specifies what the validation will test and what success looks like. The Validation Report (`MAP-VR-LC-001`) reports what the validation found. Measured run values live in the Validation Report, not in this plan, to preserve strict pre-registration integrity.
 
 ---
 
-## 1. Purpose and scope of the plan
-This plan defines how the Lending Club Credit Default Model will be validated: what is in scope, what risks are being tested, what evidence will be produced, who has authority to sign off, and what happens if the validation finds the model unfit[cite: 1].
+## 1. Purpose, scope, and core validation questions
 
-* **In scope:** Independent validation of the Lending Club model as trained (NB02), fairness testing, calibration assessment, stability assessment, governance review[cite: 1].
-* **Out of scope:** Production monitoring (post-deployment), IFRS 9 provisioning use, Canadian portfolio applicability, direct protected-attribute fairness testing (no data), macroeconomic stress testing (no macro data)[cite: 1].
+This plan serves as the binding contract between the model developer and the Model Risk Committee (MRC). It defines what will be tested, what evidence will be produced, who holds sign-off authority, and what happens if the model is deemed unfit.
+
+* **In scope:** Independent validation of the Lending Club model as trained (NB02), covering the seven core validation dimensions and governance compliance.
+* **Out of scope:** Production monitoring (post-deployment), IFRS 9 provisioning use, Canadian portfolio applicability, direct protected-attribute fairness testing (no data), and macroeconomic stress testing (no macro data).
+
+### The Seven Core Validation Questions
+The technical validation activities in this plan are structured to answer seven foundational model risk questions:
+
+1. **What is the performance?** — Does the model achieve sufficient discrimination and ranking sharpness for collections prioritization?
+2. **What is the stability?** — Does the model maintain consistent population and score distributions across time?
+3. **What is the drift?** — Are predicted probabilities well-calibrated, and how are feature/prediction shifts tracked?
+4. **What is the fairness?** — Does the model produce disparate impact across protected-attribute proxies?
+5. **What is the explainability?** — Are the model's drivers transparent and aligned with credit-risk theory?
+6. **What is the stress testing?** — How does the model behave under adverse macroeconomic scenarios?
+7. **What is the sensitivity analysis?** — How sensitive are model outcomes and fairness metrics to operating thresholds and proxy definitions?
 
 ---
 
-## 2. Validation activities
-The validation has five activities, ordered by priority[cite: 1]:
+## 2. Addressing the seven core validation dimensions
 
-| # | Activity | What the validation will test | Prescribed method | Prescribed criterion |
-|---|---|---|---|---|
-| 1 | Fairness | Whether the model produces disparate impact across region groups[cite: 1] | FD-05 4/5ths rule at region level (lowest-cardinality attribute)[cite: 1] | $\text{DI} \ge 0.80$ (DCR §3 FD-01)[cite: 1] |
-| 2 | Performance | Whether the model discriminates well enough for collections prioritization[cite: 1] | AUC, KS, precision, recall, PR-AUC on held-out set[cite: 1] | $\text{AUC} \ge 0.65$, $\text{KS} \ge 0.30$ (DCR §1)[cite: 1] |
-| 3 | Calibration | Whether predicted probabilities are reliable for decision-making[cite: 1] | HL test with degeneracy check; slope/intercept[cite: 1] | HL $p > 0.05$ for $\ge 3$ of 4 models (DCR §2)[cite: 1] |
-| 4 | Stability | Whether the model will perform consistently on new data[cite: 1] | PSI on a time-based split[cite: 1] | $\text{PSI} < 0.15$ (DCR §4)[cite: 1] |
-| 5 | Governance | Whether the model is documented, reproducible, and compliant with regulatory expectations[cite: 1] | OSFI E-23, SR 11-7, ECOA mapping[cite: 1] | Compliance score $\ge 80$ (DCR §9)[cite: 1] |
+### 2.1 Performance (Question 1)
+* **What is tested:** Discrimination power and ranking sharpness on the held-out validation set (NB03).
+* **Prescribed method:** Independent recomputation of ROC-AUC, PR-AUC, KS statistic (derived from the ROC curve), Brier score, Log Loss, Precision, Recall, and F1 score directly from `predictions.pkl` (reconciled against NB02 within $1e-6$).
+* **Prescribed criteria:** $\text{AUC-ROC} \ge 0.65$; $\text{KS} \ge 0.30$ (moderate separation) / $\ge 0.40$ (strong separation); precision/recall reviewed against operational collections cost at the operating point.
+
+### 2.2 Stability (Question 2)
+* **What is tested:** Population and score stability across temporal vintages (NB03).
+* **Prescribed method:** Population Stability Index (PSI) computed across a time-based walk-forward split.
+* **Prescribed criterion & scope exception:** $\text{PSI} < 0.15$ (DCR §4). **Documented Exception:** Because `issue_month` was removed to eliminate temporal leakage (LC-DS-001 §6), a random stratified 80/20 split is used. Consequently, PSI is explicitly recorded as `not_assessed` (rather than falsely reported as "STABLE"), carrying a formal model risk rating limitation (`F-03.02` / `LC-R-02`).
+
+### 2.3 Drift & Calibration (Question 3)
+* **What is tested:** Probability reliability (calibration drift) and ongoing post-deployment monitoring readiness (NB03).
+* **Prescribed method:** Hosmer-Lemeshow (HL) goodness-of-fit test (10 percentile bins, $\text{df} = 8$) paired with logistic calibration slope and intercept analysis ($y$ regressed on $y_{\text{proba}}$), plus an explicit **degeneracy check** (flagging HL $p$-values equal to exactly $0.0$ or $1.0$ as numerical artifacts rather than valid calibration results).
+* **Prescribed criterion:** HL $p > 0.05$ for $\ge 3$ of 4 candidate models (DCR §2), alongside post-deployment feature/score drift monitoring requirements.
+
+### 2.4 Fairness (Question 4)
+* **What is tested:** Disparate impact across demographic/geographic proxy groups under ECOA principles (NB03).
+* **Prescribed method:** FD-05 4/5ths rule applied to the lowest-cardinality plausible proxy available (`region` — 4 Census regions, satisfying the $\le 50$ group cardinality cap), excluding groups with $N < 30$ (`FD-03`). Disparate Impact is computed as $\text{DI} = \min(\text{Approval Rate}) / \max(\text{Approval Rate})$ at threshold $0.5$.
+* **Prescribed criteria:** $\text{DI} \ge 0.80$ (`OK`), $0.60\text{–}0.80$ (`MODERATE`), $< 0.60$ (`SEVERE` — deployment blocked per DCR §3 FD-01).
+
+### 2.5 Explainability (Question 5)
+* **What is tested:** Feature attribution transparency and alignment with economic/credit-risk theory (NB03).
+* **Prescribed method:** TreeExplainer (SHAP) computed on a 100-row sample to extract top-10 feature contributions, followed by a formal monotonicity and directionality check against domain expectations.
+* **Prescribed criterion:** Top-10 SHAP features must exhibit directional consistency with credit-risk theory (e.g., higher DTI or delinquency increasing predicted default risk); counterintuitive directions are logged as formal findings (`monotonicity_check.csv`).
+
+### 2.6 Stress Testing (Question 6)
+* **What is tested:** Model resilience under adverse macroeconomic regimes (e.g., unemployment spikes or interest rate shocks).
+* **Prescribed status (Scope Exclusion):** **Excluded / Out of Scope** (`F-03.08`). The public Lending Club snapshot contains no macroeconomic variables or multi-cycle stress scenarios. Procyclical blindness is documented as an inherent limitation (`R-07`) requiring external macro overlay or out-of-time multi-cycle data prior to production reliance.
+
+### 2.7 Sensitivity Analysis (Question 7)
+* **What is tested:** Sensitivity of classification performance, precision/recall trade-offs, and disparate impact ratios to threshold selection and underwriting proxies (`grade`/`sub_grade`).
+* **Prescribed method:** Comparative evaluation of performance metrics at both the default $0.5$ cutoff and optimal Youden threshold, alongside feature-ablation comparisons with and without proprietary platform grades (`LC-FDL-001` §4).
+* **Prescribed status / Limitation:** Operating-point sensitivity of Disparate Impact (testing DI across thresholds other than $0.5$) is documented as a known validation-process limitation (`VL-5`) and queued as a future-version enhancement.
 
 ---
 
-## 3. Validation scope
+## 3. Summary of validation scope and exclusions
 
 ### 3.1 What is validated
-* **Data quality:** Missingness, leakage, duplicates, quality score (NB01)[cite: 1].
-* **Model construction:** Four model classes, hyperparameters, split method (NB02)[cite: 1].
-* **Performance:** AUC, KS, precision, recall, PR-AUC on held-out set (NB03)[cite: 1].
-* **Fairness:** FD-05 4/5ths rule at region level (NB03)[cite: 1].
-* **Calibration:** HL test + slope/intercept + degeneracy check (NB03)[cite: 1].
-* **Stability:** PSI attempt (expected `not_assessed`) (NB03)[cite: 1].
-* **Explainability:** SHAP top-10 + monotonicity check (NB03)[cite: 1].
-* **Cross-population:** German Credit direction-only comparison (NB05)[cite: 1].
+| Dimension | Scope | Notebook |
+|---|---|---|
+| Data quality | Missingness, leakage, duplicates, quality score | NB01 |
+| Model construction | Four model classes, frozen hyperparameters, split method | NB02 |
+| Performance (Q1) | AUC, KS, precision, recall, PR-AUC on held-out set | NB03 |
+| Stability (Q2) | PSI attempt (expected `not_assessed` due to random split) | NB03 |
+| Drift / Calibration (Q3) | HL test + slope/intercept + degeneracy check | NB03 |
+| Fairness (Q4) | FD-05 4/5ths rule at region level | NB03 |
+| Explainability (Q5) | SHAP top-10 + monotonicity check | NB03 |
+| Cross-population | German Credit direction-only generalization check | NB05 |
 
 ### 3.2 What is not validated
-* **Production scoring:** No deployed service exists (Out of scope)[cite: 1].
-* **IFRS 9 provisioning:** Target is 16+ days, not 30+ days (F-03.10 scope restriction)[cite: 1].
-* **Canadian applicability:** U.S. data only (F-03.09 limitation)[cite: 1].
-* **Direct race/gender fairness:** No protected attributes in dataset (LC-DS-001 §8 L3)[cite: 1].
-* **Macroeconomic stress:** No macro factors in dataset (F-03.08 limitation)[cite: 1].
-* **Time-based stability:** No usable date column after leakage removal (F-03.02 split exception)[cite: 1].
+| Item | Reason | Documented as |
+|---|---|---|
+| Production scoring | No deployed service exists | Out of scope |
+| IFRS 9 provisioning | Target is 16+ days, not 30+ days | `F-03.10` (scope restriction) |
+| Canadian applicability | U.S. data only | `F-03.09` (limitation) |
+| Direct race/gender fairness | No protected attributes in dataset | `LC-DS-001` §8 L3 |
+| Macroeconomic stress (Q6) | No macro factors in dataset | `F-03.08` (limitation) |
+| Time-based stability (Q2) | No usable date column after leakage removal | `F-03.02` (split exception) |
 
 ---
 
 ## 4. Risk assessment
 
-### 4.1 Inherent risks
-* **R-01:** Leakage contamination (post-origination features inflate performance) — tested via pre-registered leakage list and reconciliation assertion[cite: 1].
-* **R-02:** Severe disparate impact (region-level DI below 0.60) — tested via FD-05 4/5ths rule[cite: 1].
-* **R-03:** Poor calibration (HL $p \le 0.05$) — tested via HL test + degeneracy check and slope/intercept[cite: 1].
-* **R-04:** Methodological deviation (random split, not walk-forward) — disclosed in `split_disclosure`[cite: 1].
-* **R-05:** Weak discrimination (KS below 0.30) — tested via KS statistic from ROC curve[cite: 1].
-* **R-06:** Counterintuitive SHAP (features opposite to credit theory) — tested via SHAP top-10 monotonicity check[cite: 1].
-* **R-07 to R-10:** Macro factors, jurisdictional scope, IFRS 9 misalignment, and operating threshold precision — documented limitations and operational metrics[cite: 1].
+### 4.1 Inherent model risks
+| Risk ID | Inherent risk | Why it matters | How the validation detects it |
+|---|---|---|---|
+| **R-01** | Leakage contamination | Post-origination features artificially inflate performance | Pre-registered leakage list; reconciliation assertion; AUC drop measurement |
+| **R-02** | Severe disparate impact | Region-level $\text{DI} < 0.60$ blocks deployment on fairness grounds | FD-05 4/5ths rule at region level |
+| **R-03** | Poor calibration | HL $p \le 0.05$ produces misleading default probabilities | HL test + degeneracy check; slope/intercept |
+| **R-04** | Methodological deviation | Random split instead of walk-forward prevents PSI assessment | Disclosed in `split_disclosure`; tracked as `LC-R-02` |
+| **R-05** | Weak discrimination | $\text{KS} < 0.30$ limits ranking sharpness for collections | KS statistic from ROC curve |
+| **R-06** | Counterintuitive SHAP | Features opposite to credit theory indicate spurious patterns | SHAP top-10 monotonicity check |
+| **R-07** | No macro factors | Procyclical blindness (no stress testing) | Documented limitation (`F-03.08`) |
+| **R-08** | U.S. data only | Jurisdictional applicability risk | Documented limitation (`F-03.09`) |
+| **R-09** | IFRS 9 misalignment | 16+ vs. 30+ days delinquency threshold | Scope restriction (`F-03.10`) |
+| **R-10** | Low operating precision | High false-positive rate in collections outreach | Precision/recall evaluation at operating threshold |
 
-### 4.2 Validation risks (Process risks)
-* **VR-1:** Fairness test applied at the wrong cardinality — mitigated by enforcing FD-05 cardinality constraint[cite: 1].
-* **VR-2:** HL degeneracy undetected — mitigated by enforcing degeneracy check ($p = 0.0$ or $1.0$)[cite: 1].
-* **VR-3:** PSI reported as STABLE on a random split — mitigated by reporting `not_assessed` when split is non-temporal[cite: 1].
-* **VR-4:** Verdict authored outside the ownership chain — mitigated by `authored_by` assertion[cite: 1].
-* **VR-5:** Reconciliation drift between NB02 and NB03 — mitigated by $1e-6$ reconciliation assertion[cite: 1].
+### 4.2 Validation process risks
+| Risk ID | Validation risk | Impact on the validation | Mitigation |
+|---|---|---|---|
+| **VR-1** | Fairness test applied at wrong cardinality | DI degenerates if computed per-state one-hot | FD-05 cardinality constraint ($\le 50$ groups) enforced |
+| **VR-2** | HL degeneracy undetected | Degenerate $p$-values ($0.0$ or $1.0$) misread as results | Degeneracy check enforced before scoring |
+| **VR-3** | PSI reported as STABLE on random split | Misleading stability claim | PSI forced to `not_assessed` on non-temporal splits |
+| **VR-4** | Verdict authored outside ownership chain | Unauditable or self-approved verdict | `authored_by == "NB03"` assertion in NB04/NB05 |
+| **VR-5** | Reconciliation drift (NB02 vs. NB03) | Validator metrics diverge from developer metrics | $1e-6$ reconciliation assertion |
+
+### 4.3 Residual risk acceptance conditions
+| Risk ID | Residual risk acceptance condition | Tracking |
+|---|---|---|
+| **R-01** | All nine pre-registered leakage features removed; AUC drop disclosed | `LC-R-01` in `MAP-RP-001` |
+| **R-02** | Region-level $\text{DI} \ge 0.80$ on held-out population at FD-05 cardinality | `LC-R-01` in `MAP-RP-001` |
+| **R-03** | Poorly calibrated models recalibrated (Platt/isotonic) or replaced; HL degeneracy resolved | `LC-R-03` in `MAP-RP-001` |
+| **R-04** | Either MD-001 §2 amended for snapshot data, or walk-forward run on dated data | `LC-R-02` in `MAP-RP-001` |
+| **R-05** | $\text{KS} \ge 0.30$ achieved, or weaker KS accepted with MRC business rationale | `LC-R-04` in `MAP-RP-001` |
+| **R-06** | Counterintuitive SHAP features investigated and re-engineered or justified | `LC-R-04` in `MAP-RP-001` |
+| **R-07–R-09** | Macro, Canadian, and IFRS 9 exclusions accepted as formal scope restrictions | `LC-R-05` in `MAP-RP-001` |
+| **R-10** | Operating threshold calibrated against collections business cost | Part of `LC-R-03` |
 
 ---
 
-## 5. Validation governance & Verdict ownership chain
+## 5. Validation governance & verdict-ownership chain
 
-* **The Verdict-Ownership Chain:** 
-  $$\text{NB02 (Developer)} \longrightarrow \text{NB03 (Validator writes verdict, authored\_by}=\text{"NB03"}) \longrightarrow \text{NB04/NB05 (Governance inherits)}$$[cite: 1]
-* **Decision Authority Matrix:** Only the **MRC Chair** holds ultimate approval, rejection, or override authority (with documented rationale), while the Independent Validator authors the binding validation opinion[cite: 1].
-
----
-
-## 6. Validation-process limitations (VL-1 to VL-7)
-* Highlights constraints including region proxy usage (`VL-1`), absence of PSI on random split (`VL-2`), 100-row SHAP sample (`VL-3`), HL degeneracy (`VL-4`), single-threshold operating point (`VL-5`), lack of V1.0 baseline (`VL-6`), and analyst-pipeline execution structure noting technical vs. organizational independence (`VL-7`)[cite: 1].
+### 5.1 Verdict-ownership chain
+```text
+NB02 (Developer)  ──▶ writes performance_summary_v2.json WITHOUT verdict
+       │
+       ▼
+NB03 (Validator)  ──▶ asserts no verdict, writes verdict + authored_by="NB03"
+       │
+       ├──▶ NB04 (Governance)       ──▶ asserts authored_by="NB03", inherits verdict
+       └──▶ NB05 (Cross-validation) ──▶ asserts authored_by="NB03", reads context
