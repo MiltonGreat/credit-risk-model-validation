@@ -47,36 +47,36 @@ The technical validation activities in this plan are structured to answer seven 
 
 ## 2. Addressing the seven core validation dimensions
 
-### 2.1 Performance (Question 1)
+### 2.1 Performance (What is the performance?)
 * **What is tested:** Discrimination power and ranking sharpness on the held-out validation set (NB03).
 * **Prescribed method:** Independent recomputation of ROC-AUC, PR-AUC, KS statistic (derived from the ROC curve), Brier score, Log Loss, Precision, Recall, and F1 score directly from `predictions.pkl` (reconciled against NB02 within $1e-6$).
 * **Prescribed criteria:** $\text{AUC-ROC} \ge 0.65$; $\text{KS} \ge 0.30$ (moderate separation) / $\ge 0.40$ (strong separation); precision/recall reviewed against operational collections cost at the operating point.
 
-### 2.2 Stability (Question 2)
+### 2.2 Stability (What is the stability?)
 * **What is tested:** Population and score stability across temporal vintages (NB03).
 * **Prescribed method:** Population Stability Index (PSI) computed across a time-based walk-forward split.
 * **Prescribed criterion & scope exception:** $\text{PSI} < 0.15$ (DCR §4). **Documented Exception:** Because `issue_month` was removed to eliminate temporal leakage (LC-DS-001 §6), a random stratified 80/20 split is used. Consequently, PSI is explicitly recorded as `not_assessed` (rather than falsely reported as "STABLE"), carrying a formal model risk rating limitation (`F-03.02` / `LC-R-02`).
 
-### 2.3 Drift & Calibration (Question 3)
+### 2.3 Drift & Calibration (What is the drift?)
 * **What is tested:** Probability reliability (calibration drift) and ongoing post-deployment monitoring readiness (NB03).
 * **Prescribed method:** Hosmer-Lemeshow (HL) goodness-of-fit test (10 percentile bins, $\text{df} = 8$) paired with logistic calibration slope and intercept analysis ($y$ regressed on $y_{\text{proba}}$), plus an explicit **degeneracy check** (flagging HL $p$-values equal to exactly $0.0$ or $1.0$ as numerical artifacts rather than valid calibration results).
 * **Prescribed criterion:** HL $p > 0.05$ for $\ge 3$ of 4 candidate models (DCR §2), alongside post-deployment feature/score drift monitoring requirements.
 
-### 2.4 Fairness (Question 4)
+### 2.4 Fairness (What is the fairness?)
 * **What is tested:** Disparate impact across demographic/geographic proxy groups under ECOA principles (NB03).
 * **Prescribed method:** FD-05 4/5ths rule applied to the lowest-cardinality plausible proxy available (`region` — 4 Census regions, satisfying the $\le 50$ group cardinality cap), excluding groups with $N < 30$ (`FD-03`). Disparate Impact is computed as $\text{DI} = \min(\text{Approval Rate}) / \max(\text{Approval Rate})$ at threshold $0.5$.
 * **Prescribed criteria:** $\text{DI} \ge 0.80$ (`OK`), $0.60\text{–}0.80$ (`MODERATE`), $< 0.60$ (`SEVERE` — deployment blocked per DCR §3 FD-01).
 
-### 2.5 Explainability (Question 5)
+### 2.5 Explainability (What is the explainability?)
 * **What is tested:** Feature attribution transparency and alignment with economic/credit-risk theory (NB03).
 * **Prescribed method:** TreeExplainer (SHAP) computed on a 100-row sample to extract top-10 feature contributions, followed by a formal monotonicity and directionality check against domain expectations.
 * **Prescribed criterion:** Top-10 SHAP features must exhibit directional consistency with credit-risk theory (e.g., higher DTI or delinquency increasing predicted default risk); counterintuitive directions are logged as formal findings (`monotonicity_check.csv`).
 
-### 2.6 Stress Testing (Question 6)
+### 2.6 Stress Testing (What is the stress testing?)
 * **What is tested:** Model resilience under adverse macroeconomic regimes (e.g., unemployment spikes or interest rate shocks).
 * **Prescribed status (Scope Exclusion):** **Excluded / Out of Scope** (`F-03.08`). The public Lending Club snapshot contains no macroeconomic variables or multi-cycle stress scenarios. Procyclical blindness is documented as an inherent limitation (`R-07`) requiring external macro overlay or out-of-time multi-cycle data prior to production reliance.
 
-### 2.7 Sensitivity Analysis (Question 7)
+### 2.7 Sensitivity Analysis (What is the sensitivity analysis?)
 * **What is tested:** Sensitivity of classification performance, precision/recall trade-offs, and disparate impact ratios to threshold selection and underwriting proxies (`grade`/`sub_grade`).
 * **Prescribed method:** Comparative evaluation of performance metrics at both the default $0.5$ cutoff and optimal Youden threshold, alongside feature-ablation comparisons with and without proprietary platform grades (`LC-FDL-001` §4).
 * **Prescribed status / Limitation:** Operating-point sensitivity of Disparate Impact (testing DI across thresholds other than $0.5$) is documented as a known validation-process limitation (`VL-5`) and queued as a future-version enhancement.
