@@ -22,33 +22,32 @@ This register records every decision criterion used in the Lending Club pipeline
 
 ---
 
-## 2. Core decision framework (Answering the six core questions)
-
-### 2.1 What constitutes acceptable performance? (Question 1)
+## 2. Core decision framework
+### 2.1 What constitutes acceptable performance?
 Acceptable performance requires meeting pre-registered minimum floors designed for collections prioritization:
 * **Discrimination:** AUC-ROC $\ge 0.65$ (DCR §1)[cite: 2]; Kolmogorov-Smirnov (KS) statistic $\ge 0.30$ (strong separation at $\ge 0.40$).
 * **Precision / Recall:** Evaluated against business cost at the operating threshold (with feasibility constraints recognizing that at a ~20% default rate, extreme precision/recall targets require higher AUC; metrics are thus evaluated at a stated cutoff).
 * **Class Balance & Feasibility:** The default rate baseline is approximately 1.78% to 20% depending on sample scope, requiring specialized metrics over naive accuracy.
 
-### 2.2 What constitutes material drift? (Question 2)
+### 2.2 What constitutes material drift?
 Material drift and stability degradation are captured via score and population shifts:
 * **Stability Index (PSI):** $\text{PSI} < 0.15$ is stable; $0.15\text{–}0.25$ indicates moderate drift; $\text{PSI} > 0.25$ constitutes **major drift** (2 points on risk score, DCR §4)[cite: 2]. *(Note: In this snapshot run, PSI is `not_assessed` due to the lack of a usable date column after leakage removal).*
 * **Calibration Breakdown:** Hosmer-Lemeshow (HL) $p \le 0.05$ indicates poor calibration drift or misaligned probability estimates, triggering a **HIGH finding** (DCR §2)[cite: 2].
 
-### 2.3 What constitutes unacceptable disparity? (Question 3)
+### 2.3 What constitutes unacceptable disparity?
 Fairness is evaluated using the 4/5ths rule on the lowest-cardinality geographic proxy (`region`, 4 Census regions, satisfying the $\le 50$ group cardinality cap `FD-05`, with group size minimum $N \ge 30$ `FD-03`)[cite: 2]:
 * **$\text{DI} \ge 0.80$ (`OK`):** Acceptable disparity level (0 points)[cite: 2].
 * **$0.60 \le \text{DI} < 0.80$ (`MODERATE`):** Elevated disparate impact requiring tracking (1 point)[cite: 2].
 * **$\text{DI} < 0.60$ (`SEVERE`):** **Unacceptable disparity**, triggering an automatic CRITICAL finding, 3 risk score points, and blocking deployment (DCR §3 `FD-01`)[cite: 2].
 
-### 2.4 What triggers further investigation? (Question 4)
+### 2.4 What triggers further investigation?
 Further technical investigation and diagnostic review are triggered by:
 * **Investigate Performance Bands:** AUC falling in the $0.60\text{–}0.65$ investigate band (1 risk score point)[cite: 2].
 * **HL Suspicious P-Values:** HL $p$-values of exactly $0.0$ or $1.0$ (flagged as numerical artifacts requiring implementation verification, `E-M03-06`)[cite: 2].
 * **Explainability Anomalies:** $\ge 1$ counterintuitive feature direction under SHAP analysis, triggering a HIGH finding (`F-03.07`)[cite: 2].
 * **Operating Precision:** High false-positive rates at the operating threshold, reviewed against business cost (`F-03.11`)[cite: 2].
 
-### 2.5 What constitutes a failed validation? (Question 5)
+### 2.5 What constitutes a failed validation?
 A validation fails when the composite risk score or critical automated guards breach acceptable safety limits:
 * **Risk Score Rating Bands (DCR §9):**
   * **0–2 points (`LOW`):** APPROVE[cite: 2]
@@ -57,7 +56,7 @@ A validation fails when the composite risk score or critical automated guards br
   * **8–10 points (`CRITICAL`):** **REJECT**[cite: 2]
 * **Failure Condition:** Any run resulting in a **HIGH** or **CRITICAL** rating (such as this run's score of **6/10**, driven by severe regional disparate impact and calibration failure) constitutes a failed validation, resulting in a mandatory **REJECT** verdict[cite: 2].
 
-### 2.6 What requires escalation? (Question 6)
+### 2.6 What requires escalation?
 The following triggers mandate immediate escalation to the Model Risk Committee (MRC):
 * **CRITICAL or HIGH Findings:** Any automated guard failure (`LC-G1` through `LC-G6`), such as leakage presence (`LC-G1`), severe disparate impact (`LC-G2`, $\text{DI} < 0.60$), or weak ranking sharpness (`LC-G4`, $\text{KS} < 0.30$)[cite: 2].
 * **Remediation Delays:** Remediation tasks falling behind schedule (escalation mandated at 50% of timeline)[cite: 2].
