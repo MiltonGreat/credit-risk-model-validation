@@ -1,7 +1,7 @@
 ---
 Artifact ID: LC-A04-FDL
-Version: 1.1
-Run ID: [YYYYMMDD_HHMMSS]
+Version: 1.2
+Run ID: 20261118_135400
 Document Title: Feature Decision Log
 Project: Lending Club Consumer Credit Risk Model Validation
 ---
